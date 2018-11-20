@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p = "http://www.springframework.org/schema/p"
+    xmlns:context="http://www.springframework.org/schema/context"
+   
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:tx ="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+	http://www.springframework.org/schema/context 
+	http://www.springframework.org/schema/context/spring-context-3.2.xsd
+	http://www.springframework.org/schema/aop 
+	http://www.springframework.org/schema/aop/spring-aop-3.2.xsd">
+	
+	
+	<!-- 引入properties文件 -->
+	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="location">
+			<value>classpath:database.properties</value>
+		</property>
+	</bean>
+	
+	<!-- 配置DataSource -->
+	<bean id="dateSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+		<property name="driverClassName" value="${driver}"/>
+		<property name="url" value="${url}"/>	 
+		<property name="username" value="${user}"/>
+		<property name="password" value="${password}"/>
+	</bean>
+	
+	
+	<!-- 配置JNDI配置DataSource -->
+	<bean id="dateSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName">
+			<value>java:com/env/jdbc/smbms</value>
+		</property>
+	</bean>
+	
+	
+	<!-- 配置DAO,根据属性名称自己动装配 -->
+	<bean id="userMapper" class="com.dao.Impl.UserMapperImpl" autowire="byName"></bean>
+	<!-- 配置业务Bean,根据属性名称自动装配 -->
+	<bean id="userService" class="com.service.Impl.UserServiceImpl" autowire="byName"></bean>
+	
+	
+	<import resource="applicationContext-dao.xml"/>
+	<import resource="applicationContext-service.xml"/>
+</beans>
+
